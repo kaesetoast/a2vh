@@ -1,0 +1,23 @@
+{
+  "name": "a2vh",
+  "version": "0.0.0",
+  "description": "A commandline tool to quickly create vhosts for Apache2",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaesetoast/a2vh.git"
+  },
+  "keywords": [
+    "apache",
+    "cli",
+    "vhost"
+  ],
+  "author": "Philipp Nowinski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaesetoast/a2vh/issues"
+  }
+}
