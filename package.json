@@ -15,9 +15,23 @@
     "cli",
     "vhost"
   ],
-  "author": "Philipp Nowinski",
+  "author": {
+    "name": "Philipp Nowinski",
+    "email": "philipp@nowinski.de",
+    "url": "http://philippnowinski.de"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kaesetoast/a2vh/issues"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "a2vh": "cli.js"
+  },
+  "dependencies": {
+    "minimist": "0.0.8",
+    "path": "~0.4.9",
+    "chalk": "~0.4.0",
+    "async": "~0.2.10"
   }
 }

@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+        ServerName {sitename}.dev
+        DocumentRoot {documentRoot}{sitename}/
+        <Directory {documentRoot}{sitename}/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+        ErrorLog /var/log/apache2/{sitename}-error.log
+        LogLevel warn
+        CustomLog /var/log/apache2/{sitename}-access.log combined
+        ServerSignature On
+</VirtualHost>
