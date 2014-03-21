@@ -13,6 +13,16 @@ module.exports = function a2vh(argv) {
         sitename,
         documentRoot;
 
+    function checkParams(callback) {
+        if (typeof argv._[0] === 'undefined' || typeof argv._[1] === 'undefined') {
+            callback(new Error('Please provide a sitename and the path to the document root'), 'check');
+        } else {
+            sitename = argv._[0];
+            documentRoot = argv._[1];
+            callback(null, 'check');
+        }
+    }
+
     function checkDir(callback) {
         fs.exists(dir, function(exists) {
             if (!exists) {
@@ -28,8 +38,6 @@ module.exports = function a2vh(argv) {
             if (err) {
                 callback(err, 'two');
             } else {
-                sitename = argv._[0];
-                documentRoot = argv._[1];
                 data = data.toString().replace(/\{sitename\}/g, sitename);
                 content = data.replace(/\{documentRoot\}/g, /\/$/.test(documentRoot) ? documentRoot : documentRoot + '/');
                 callback(null, 'two');
@@ -84,6 +92,7 @@ module.exports = function a2vh(argv) {
 
     async.series(
         [
+            checkParams,
             checkDir,
             getTemplate,
             writeConfFile,
