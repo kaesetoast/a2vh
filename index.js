@@ -4,7 +4,10 @@ var async = require('async'),
     exec = require('child_process').exec,
     chalk = require('chalk'),
     dir = path.join('/', 'etc', 'apache2', 'sites-available'),
-    hostsFile = path.join('/', 'etc', 'hosts');
+    hostsFile = path.join('/', 'etc', 'hosts'),
+    home = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'],
+    configFilePath = path.join(home, '.a2vh'),
+    templatePath = path.join('.', 'templates', 'vhost');
 
 module.exports = function a2vh(argv) {
     'use strict';
@@ -13,12 +16,36 @@ module.exports = function a2vh(argv) {
         sitename,
         documentRoot;
 
+    function readConfig(callback) {
+        fs.exists(configFilePath, function(exists){
+            if (exists) {
+                fs.readFile(configFilePath, function(err, data) {
+                    var config = JSON.parse(data);
+                    if (config.documentRoot) {
+                        documentRoot = config.documentRoot;
+                    }
+                    if (config.dir) {
+                        dir = config.dir;
+                    }
+                    if (config.templatePath) {
+                        templatePath = config.templatePath;
+                    }
+                    callback(null, 'config');
+                });
+            } else {
+                callback(null, 'config');
+            }
+        });
+    }
+
     function checkParams(callback) {
-        if (typeof argv._[0] === 'undefined' || typeof argv._[1] === 'undefined') {
-            callback(new Error('Please provide a sitename and the path to the document root'), 'check');
+        if (typeof argv._[0] === 'undefined') {
+            callback(new Error('Please provide a sitename'), 'check');
+        } else if(typeof argv._[1] === 'undefined' && typeof documentRoot === 'undefined') {
+            callback(new Error('Please provide the path to the documentRoot'), 'check');
         } else {
             sitename = argv._[0];
-            documentRoot = argv._[1];
+            documentRoot = typeof documentRoot === 'undefined' ? argv._[1] : documentRoot;
             callback(null, 'check');
         }
     }
@@ -34,7 +61,7 @@ module.exports = function a2vh(argv) {
     }
 
     function getTemplate(callback) {
-        fs.readFile('./templates/vhost', function(err, data) {
+        fs.readFile(templatePath, function(err, data) {
             if (err) {
                 callback(err, 'two');
             } else {
@@ -92,6 +119,7 @@ module.exports = function a2vh(argv) {
 
     async.series(
         [
+            readConfig,
             checkParams,
             checkDir,
             getTemplate,
